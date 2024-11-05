@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <style>
+        #parent{
+            height: 100vh;
+            position: relative;
+            /* background-color:#181825; */
+
+            overflow: hidden;
+        }
+        #cat, #meow, #catSitting, .heart {
+            font-family: 'Courier New', Courier, monospace;
+            white-space:pre;
+            user-select: none;
+        }
+        #cat{
+        position: absolute; bottom: 0;       
+        }
+        #meow{
+            position: absolute; bottom: 3.5em; 
+        }
+        #catSitting {
+            position: absolute; bottom: -1em; 
+        }
+        .heart {
+            position: absolute;
+        }
+        @keyframes rainbow {
+            /* 0%   { color: #f38ba8; }
+            20%  { color: #fab387; }
+            40%  { color: #f9e2af; }
+            60%  { color: #a6e3a1; }
+            80%  { color: #89b4fa; }
+            100% { color: #cba6f7; } */
+            0%  { color: var(--vscode-charts-red)}
+            20% { color: var(--vscode-charts-orange)}
+            40% { color: var(--vscode-charts-yellow)}
+            60% { color: var(--vscode-charts-green)}
+            80% { color: var(--vscode-charts-blue)}
+            100% { color: var(--vscode-charts-purple)}
+        }
+        
+        .rainbow {
+            animation: 2s infinite rainbow;
+        } 
+        
+
+    </style>
+<title>meow</title>
+</head>
+
+<body>
+    <div id="parent" class="rainbow">
+        <div id="meow">
+             _________  
+            ( meow :3 ) 
+             ￣￣￣\(￣ 
+        </div>
+
+        <div id="cat" ></div>
+
+    </div>
+
+<script>
+    let i=0
+    const a="<br>"
+    let sitting=false
+
+    const catFrames = [
+
+        "  ／\\、   "+a+
+        " (`˕- ﾌ__ノ "+a+
+        "  |、     ) "+a+
+        "  ૮し\"\"૮しﾉ "+a,
+
+        "  /ᐠ_^      "+a+
+        " (^˕^ )__ノ "+a+
+        "  |、     ) "+a+
+        "  し૮\"\"し૮ﾉ "+a,
+
+
+        "  __/\\      "+a+
+        "<(-˕՛ )__ノ "+a+
+        "  |、     ) "+a+
+        "  ૮し\"\"૮しﾉ "+a,
+
+
+        "  /ᐠ_^      "+a+
+        " (^˕^ )__ノ "+a+
+        "  |、     ) "+a+
+        "  し૮\"\"し૮ﾉ "+a,
+
+        "    ／\\、    "+a+
+        "    (`˕- ﾌ    "+a+
+        "    |、  ৲    "+a+
+        "    ししと )⎠ "+a
+    ]
+    
+    //changes cat sprite
+    function animation() {
+        if (sitting){
+            const cat=document.getElementById("cat").innerHTML=catFrames[catFrames.length-1];
+        }else{
+            const cat=document.getElementById("cat").innerHTML=catFrames[i];
+            i = (i+1)%(catFrames.length-1);
+        }
+    }
+
+    //moving
+    let j = 0;
+    const cat = document.getElementById("cat");
+    const meow = document.getElementById("meow");
+    const heart = document.getElementById("heart");
+    const parent = document.getElementById("parent");
+    console.log("kai and lia are stupid")
+    function moving() {
+        const catSize = cat.getBoundingClientRect().right - cat.getBoundingClientRect().left;
+        const size = (parent.getBoundingClientRect().right - parent.getBoundingClientRect().left);
+        // console.log(cat.getBoundingClientRect().right, size);
+        if (!sitting){
+            j+=1;
+            // console.log(j);
+            if (cat.getBoundingClientRect().left < -catSize){
+                j=-6;
+            }
+        }
+        cat.style.right= (0+j) + "em";
+        meow.style.right= (5+j) + "em";
+    }
+    setInterval(moving,400);
+    const interval=setInterval(animation,400);
+
+    //meow
+    meow.style.display = 'none';
+    window.addEventListener("message",
+        (event) => {
+            if (event.data == 'meow') {
+                meow.style.display = 'block';
+                const meowAud = new Audio('https://bertran.xyz/media/meow.mp3')
+                meowAud.play()
+                setTimeout(
+                    function(){
+                        meow.style.display = 'none';
+                    },
+                    2000
+                );           
+            } else if (event.data == 'sit') {
+                sitting=true
+                setTimeout(
+                    function(){
+                        sitting=false;
+                    },
+                    4000
+                );           
+            }
+        },
+        false,
+    );
+
+    //better random
+    function random (dev){
+        return (Math.random()-0.5)*2*dev
+    }
+
+
+    //creates heart
+    hearts=false
+    cat.addEventListener("click",
+        function(event){
+            const heart=document.createElement('div');
+            heart.innerHTML = "♡"
+            heart.className = "heart"
+            const purr = new Audio('https://bertran.xyz/media/purr.mp3')
+            purr.play()
+            //heart animation
+            let x = 0;
+            let d = 0;
+            const Aran=random(1.5)
+            const Fran=random(1.5)
+            const Tran=random(0.3)
+            function heartAnim() {
+                d=Math.sin(2*x+Fran)*(x+2+Aran)/4+x/2;
+                console.log(d);
+                x+=0.5+Tran;
+                heart.style.right= (7+j+d) + "em";
+                heart.style.bottom= (3+x/2) + "em";
+            }
+            const heartTime=setInterval(heartAnim,200);
+            heartAnim()
+            document.getElementById('parent').appendChild(heart);
+
+            setTimeout(
+                function(){
+                    clearInterval(heartTime)
+                    heart.remove()
+                },
+                2000
+            );           
+            
+        }
+    );
+
+    </script>
+</body>
+
+</html>
